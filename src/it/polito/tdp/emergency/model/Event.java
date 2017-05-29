@@ -3,10 +3,10 @@ package it.polito.tdp.emergency.model;
 public class Event implements Comparable<Event> {
 	
 	public enum EventType { 
-		TRIAGE, // the Patient finishes the triage and goes into the waiting space
-		TIMEOUT, //the Patient changes state due to a timeout
-		FREE_STUDIO // a patient exits from the studio and a new one is called
-		} ;
+		TRIAGE, 			// the Patient finishes the triage and goes into the waiting space
+		TIMEOUT,			// the Patient changes state due to a timeout
+		FREE_STUDIO			// a patient exits from the studio and a new one is called
+	} ;
 		
 	private Patient patient ;
 	private int time ;

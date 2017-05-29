@@ -1,12 +1,14 @@
 package it.polito.tdp.emergency.model;
 
 public class Patient {
+	// è una parte del modello del mondo, quindi devo avere info su ogni singolo  paziente
 	
 	public enum PatientStatus { NEW, WHITE, YELLOW, RED, BLACK, TREATING, OUT } ;
 	
+	//lista di attesa ci permette di avere info sui pazienti, sanno quando entrano ma non quando escono
 	private String name ;
 	private PatientStatus status ;
-	private int queueTime ;
+	private int queueTime ; // si ricorda quando il paziente è entrato in coda(serve in casi di stessa gravità)
 	
 	public Patient(String name) {
 		super();
