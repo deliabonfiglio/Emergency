@@ -12,7 +12,6 @@ public class Main {
 			Patient p = new Patient("Pat"+String.valueOf(i)) ;
 			sim.addPatient(p, 8*60 + i * 10);
 		}
-		
 		sim.run();
 		
 		System.out.println("Treated:   " + sim.getPatientsTreated());
