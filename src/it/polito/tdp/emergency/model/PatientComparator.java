@@ -14,6 +14,7 @@ public class PatientComparator implements Comparator<Patient> {
 	
 	@Override
 	public int compare(Patient o1, Patient o2) {
+		
 		Patient.PatientStatus s1 = o1.getStatus();
 		Patient.PatientStatus s2 = o2.getStatus();
 		

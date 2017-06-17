@@ -24,9 +24,9 @@ public class Simulator {
 
 	// World model
 	private PriorityQueue<Patient> waitingRoom;		//mi estrae sempre il paziente con precedenza maggiore, dove la precedenza è in base al codice e il tempo di arrivo
-	private int occupiedStudios = 0;				//devo tener traccia di quanti studi medici sono occupati
+	private int occupiedStudios = 0;				//devo tener traccia di QUANTI studi medici sono occupati
 
-	// Measures of Interest
+	// Measures of Interest==RISULTATI DELLA SIMULAZIONE
 	private int patientsTreated = 0;				
 	private int patientsDead = 0;
 	private int patientsAbandoned = 0;
@@ -39,13 +39,15 @@ public class Simulator {
 		this.queue = new PriorityQueue<>();									//coda degli eventi a vuoto
 		this.waitingRoom = new PriorityQueue<>(new PatientComparator());
 	}
+	
 //aggiungi il paziente ad un determinato istante di tempo
 	public void addPatient(Patient patient, int time) {
+		
 		//devo assegnare lo stato new e prevedere che terminato il triage gli viene assegnato un codice colore
 		patient.setStatus(PatientStatus.NEW);
 		
-		//schedulo l'evento per quando il paziente esce dal triage
-		Event e = new Event(patient, time+ DURATION_TRIAGE, EventType.TRIAGE);
+		//schedulo l'evento per quando il paziente esce dal triage==> tempo=timeAcuiEntra+DurataTriage
+		Event e = new Event(patient, time + DURATION_TRIAGE, EventType.TRIAGE);
 		
 		//aggiungo l'evento alla coda
 		queue.add(e);	
@@ -115,7 +117,7 @@ public class Simulator {
 		
 		switch(p.getStatus()){
 		case WHITE:
-			//ABBANDONA
+			//ABBANDONA==> NON GENERA ALTRI EVENTI
 			this.patientsAbandoned++;
 			p.setStatus(PatientStatus.OUT);
 			//lo tolgo dalla waiting room
@@ -125,7 +127,7 @@ public class Simulator {
 		case YELLOW:
 			//diventa rosso ==> cambia lo stato, settare il timeout dei rossi
 //NON SI PUO CABIARE LO STATO DELL'OGGETTO DI UNA CODA CHE SI BASA SULLO STATO ALTRIMENTI lei NON SE NE ACCORGE,
-//QUINDI LO TOLGO E LO RIMETTO
+//QUINDI LO TOLGO, GLI SETTO IL NUOVO STATO E LO RIMETTO NELLA CODA
 			waitingRoom.remove(p);
 			p.setStatus(PatientStatus.RED);
 			
@@ -137,7 +139,7 @@ public class Simulator {
 			break;
 			
 		case RED:
-			//muori analogo al caso bianco
+			//muori==> analogo al caso bianco==> NON GENERA ALTRI EVENTI
 			this.patientsDead++;
 			p.setStatus(PatientStatus.BLACK);
 			waitingRoom.remove(p);
@@ -164,19 +166,19 @@ public class Simulator {
 	private void processTriageEvent(Event e) {
 		Patient p = e.getPatient();	// finisce il triage quindi gli devo assegnare un codice a caso
 		
-		int random = (int) (1+Math.random()*3);
+		int random = (int) (1+Math.random()*3);//PRENDE UN INTERO RANDOM TRA 1 E 3
 		
 		if(random ==1)
-				p.setStatus(PatientStatus.WHITE);
+			p.setStatus(PatientStatus.WHITE);
 		if(random ==2)
 			p.setStatus(PatientStatus.YELLOW);
 		if(random ==3)
 			p.setStatus(PatientStatus.RED);
 		
-//se c'è uno studio libero allora lo mando in cura== 
+//se c'è uno studio libero allora lo mando in cura==>
 //impostare tempo di uscita, stato a treating, studi occupati++, nella lista aggiungere che uscirà
 		
-		if(occupiedStudios<NS){
+		if(occupiedStudios < NS){
 			int duration = 0;
 			
 			if(p.getStatus()==PatientStatus.WHITE)
@@ -186,13 +188,13 @@ public class Simulator {
 			else if (p.getStatus() == PatientStatus.RED)
 				duration = DURATION_RED;
 			
-			this.occupiedStudios++;
+			this.occupiedStudios++;//il paziente va in cura nello studio
 			p.setStatus(PatientStatus.TREATING);
 			
 			queue.add(new Event (p, e.getTime()+duration, EventType.FREE_STUDIO));
 			
 		} else {
-		//altrimenti va in lista di attesa e schedulo azione di timeout
+		//altrimenti, va in lista di attesa e schedulo azione di timeout
 			int timeout = 0;
 			
 			if(p.getStatus()==PatientStatus.WHITE)
@@ -202,7 +204,8 @@ public class Simulator {
 			else if (p.getStatus() == PatientStatus.RED)
 				timeout = RED_TIMEOUT;
 			
-//tempo in cui entra in lista d'attesa va impostato prima di aggiungerlo nella lista, 
+//tempo in cui entra in lista d'attesa va impostato prima di aggiungerlo nella lista!
+			
 //perchè time viene usato nel comparator e nelle code prioritarie la comparazione viene fatta nel 
 //momento dell'aggiunta, quindi i campi del confronto dell'oggetto che inserisco devono essere validi, 
 //altrimenti se lo cambio dopo la cosa non se ne accorge ed estrae l'ogg nell'ordine errato
